@@ -1,0 +1,126 @@
+Skip to content
+ 
+Search…
+All gists
+Back to GitHub
+@thomasgauvin 
+@CharlesHolbrow
+CharlesHolbrow/ffmpeg-dash.html
+Created 2 years ago • Report abuse
+1
+2
+ Code
+ Revisions 1
+ Stars 1
+ Forks 2
+<script src="https://gist.github.com/CharlesHolbrow/3a6ac3882f4318909e0455c761ac7abe.js"></script>
+Simple example of using live streaming audio video with dash.js and ffmpeg
+ffmpeg-dash.html
+<!DOCTYPE html>
+<html lang='`en'>
+<head>
+    <meta charset='utf-8'/>
+    <title>Audio only stream example</title>
+
+    <script src='https://cdn.dashjs.org/latest/dash.all.min.js'></script>
+
+    <style>
+        video {
+            width: 640px;
+            height: 360px;
+        }
+    </style>
+</head>
+<body>
+    <h1>DASH/<code>ffmpeg</code></h1>
+    <div>
+        Put this file together with <code>video.mkv</code> in a directory, and
+        serve that directory with any web server.
+    </div>
+    <div>
+        <ul>
+            <li>
+                <a href='http://cdn.dashjs.org/latest/jsdoc/module-MediaPlayer.html'>
+                    dash.js documentation
+                </a>
+            </li>
+            <li>
+                <a href='https://www.ffmpeg.org/documentation.html'>ffmpeg docs</a>
+            </li>
+        </ul>
+    </div>
+    <h2>Live Stream Audio and Video via DASH</h2>
+    <pre>
+ffmpeg \
+    -re -i video.mkv \
+    -strict -2 \
+    -c:a opus -b:a 96k \
+    -c:v copy -b:v 2000k \
+    -f dash \
+    -window_size 4 \
+    -extra_window_size 0 \
+    -min_seg_duration 2000000 \
+    -remove_at_exit 1 \
+    manifest.mpd
+    </pre>
+    <h2>Live Stream Audio Only via DASH</h2>
+    <div>
+        I've occasionally seen the <code>ffmpeg</code> command below error and
+        exit without ever writing any output. I have not been able to reproduce
+        the error consistently. Could it happen when I re-run
+        <code>ffmpeg</code> without any pause between? I don't think that's it.
+    </div>
+    <pre>
+ffmpeg \
+    -re -i video.mkv \
+    -c:a libfdk_aac -b:a 96k \
+    -vn \
+    -f dash \
+    -window_size 4 \
+    -extra_window_size 0 \
+    -min_seg_duration 2000000 \
+    -remove_at_exit 1 \
+    manifest.mpd 
+    </pre>
+    <div>
+        <button onclick='start("audio")'>audio</button>
+        <button onclick='start("video")'>video</button>
+        <button onclick='stop()'>stop</button>
+    </div>
+
+<script>
+    var url = '/video/output.mpd';
+    var audio;
+    var player;
+
+    // In the example below, I create a new audio/video element on each call to
+    // start(). In my testing, this was not nessecary. I thought that doing this
+    // might solve the stream-restart problem. No luck so far -- It appears that
+    // re-starting the ffmpeg command always causes dash.js bugs (even if you
+    // remove the audio/video element, and create a fresh one)
+    //
+    // elementType must be 'video' or 'audio'
+    var start = window.start = function (elementType)  {
+        stop();
+        audio = document.createElement(elementType);
+        player = dashjs.MediaPlayer().create();
+        document.body.appendChild(audio);
+        player.initialize();
+        player.attachSource(url);
+        player.attachView(audio);
+        player.play();
+    };
+
+    var stop = window.stop = function() {
+        if (audio) {
+            player.reset()
+            audio.parentNode.removeChild(audio);
+            audio = null;
+            player = null;
+        }
+    };
+
+    document.addEventListener("DOMContentLoaded", function() {console.log('hello!');});
+</script>
+</body>
+</html>
