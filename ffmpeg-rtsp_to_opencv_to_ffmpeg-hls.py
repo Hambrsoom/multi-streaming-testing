@@ -160,7 +160,7 @@ def get_video_size(filename):
 
 def start_ffmpeg_process1(in_filename):
     logger.info('Starting ffmpeg process1')
-    args = ['ffmpeg', '-i', in_filename, '-b', '900k', '-f', 'rawvideo', '-pix_fmt', 'rgb24', 'pipe:']
+    args = ['ffmpeg', '-rtsp_transport', 'tcp', '-i', in_filename, '-b', '900k', '-f', 'rawvideo', '-pix_fmt', 'rgb24', 'pipe:']
 
     # args = ['ffmpeg', '-i', 'rtsp://localhost:8554/live', '-b', '900k', '-f', 'rawvideo', '-pix_fmt', 'rgb24', 'pipe:']
     # args = (       
@@ -206,7 +206,6 @@ def read_frame(process1, width, height):
 
 # calling YOLO here
 def process_frame_simple(frame):
-    return frame
     return analyze_frame(frame)
 
 def write_frame(process2, frame):
