@@ -86,7 +86,7 @@ def analyze_frame(img):
     layerOutputs = feedForwardHistory
 
     if historyLength==0 :
-        historyLength = 60
+        historyLength = 1
 
         # run the forward pass and get the output after running the neural network on the image
         layerOutputs = net.forward(output_layers_names)
