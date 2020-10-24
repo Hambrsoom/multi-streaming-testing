@@ -9,11 +9,16 @@
       <video id="player" class="video-js vjs-default-skin" controls preload>
          <source src="./video/output.m3u8" type="application/x-mpegURL">
       </video>
+      <video id="player2" class="video-js vjs-default-skin" controls preload>
+         <source src="./video/output2.m3u8" type="application/x-mpegURL">
+      </video>
       <script src="http://vjs.zencdn.net/6.2.8/video.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-hls/5.12.2/videojs-contrib-hls.min.js"></script>
       <script>
           var player = videojs('player', {width: 350, height: 200});
+          var player2 = videojs('player2', {width: 350, height: 200});
           player.play();
+          player2.play();
      </script>
    </body>
 </html>
