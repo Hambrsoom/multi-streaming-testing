@@ -24,4 +24,4 @@ def stream(file_name):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=8080)
